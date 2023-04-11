@@ -119,28 +119,56 @@ class ObjectsAndMovement:
         ObjectsAndMovement.ball()
 
 
-class Control:
+# Tes testing module
+def paddle_test():
     """
-    this is for control
+    All game objects, paddle one and paddle two, as well as the ball,
+    are made and adjusted in this function
     """
+    # Paddle 1
 
-    # def __init__(self, paddle_1_up, paddle_1_down, paddle_2_up, paddle_2_down):
-    #     self.paddle_1_up = paddle_1_up
-    #     self.paddle_1_down = paddle_1_down
-    #     self.paddle_2_up = paddle_2_up
-    #     self.paddle_2_down = paddle_2_down
+    paddle_test = tur.Turtle()
+    paddle_test.speed(0)
+    paddle_test.shape("square")
+    paddle_test.color("white")
+    paddle_test.shapesize(stretch_wid=5, stretch_len=0.8)
+    paddle_test.penup()
+    paddle_test.goto(-453, 0)
+    return paddle_test
 
-    @staticmethod
-    def keyboardBinding():
-        wn.listen()
-        wn.onkeypress(ObjectsAndMovement.paddle_1_up, "w")
-        wn.onkeypress(ObjectsAndMovement.paddle_1_down, "s")
-        wn.onkeypress(ObjectsAndMovement.paddle_2_up, "p")
-        wn.onkeypress(ObjectsAndMovement.paddle_2_down, ";")
 
+# The testing module
+def paddle_1_up():
+    paddle = paddle_test()
+    y = paddle.ycor()
+    y += 20
+    paddle.sety(y)
+
+
+# class Control:
+#     """
+#     this is for control
+#     """
+#
+#     # def __init__(self, paddle_1_up, paddle_1_down, paddle_2_up, paddle_2_down):
+#     #     self.paddle_1_up = paddle_1_up
+#     #     self.paddle_1_down = paddle_1_down
+#     #     self.paddle_2_up = paddle_2_up
+#     #     self.paddle_2_down = paddle_2_down
+#
+#     @staticmethod
+#     def keyboardBinding():
+
+
+wn.listen()
+# wn.onkeypress(ObjectsAndMovement.paddle_1_up, "w")
+wn.onkeypress(paddle_1_up, "w")
+wn.onkeypress(ObjectsAndMovement.paddle_1_down, "s")
+wn.onkeypress(ObjectsAndMovement.paddle_2_up, "p")
+wn.onkeypress(ObjectsAndMovement.paddle_2_down, ";")
 
 if __name__ == '__main__':
     ObjectsAndMovement.Create()
     Window.create()
-    Control.keyboardBinding()
+    # Control.keyboardBinding()
     wn.mainloop()
