@@ -15,11 +15,12 @@ pygame.display.set_caption("Pong by V.road")
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+BALL_RADIUS = 10
 
 PADDLE_WIDTH, PADDLE_HEIGHT = 15, 120
 
 
-def draw(win, paddles):
+def draw(win, paddles, ball):
     win.fill(BLACK)
 
     for paddle in paddles:
@@ -29,6 +30,8 @@ def draw(win, paddles):
         if i % 2 == 1:
             continue
         pygame.draw.rect(win, WHITE, (WIDTH - 160, i, 10, HEIGHT // 20))
+
+    ball.draw(win)
 
     pygame.display.update()
 
@@ -67,6 +70,10 @@ class Ball:
     def draw(self, win):
         pygame.draw.circle(win, self.COLOR, (self.x, self.y), self.radius)
 
+    def move(self):
+        self.x += self.x_vel
+        self.y += self.y_vel
+
 
 def handle_paddle_movement(keys, left_paddle, right_paddle):
     if keys[pygame.K_w] and left_paddle.y - left_paddle.VEL - 5 >= 0:
@@ -87,10 +94,12 @@ def main():
     left_paddle = Paddle(10, HEIGHT // 4, PADDLE_WIDTH, PADDLE_HEIGHT)
     right_paddle = Paddle(WIDTH + WIDTH // 4 + WIDTH // 5 + 5, HEIGHT // 4, PADDLE_WIDTH, PADDLE_HEIGHT)
 
+    ball = Ball(WIDTH // 1.35, HEIGHT // 3.2, BALL_RADIUS)
+
     while run_game:
         clock.tick(60)
 
-        draw(WN, [left_paddle, right_paddle])
+        draw(WN, [left_paddle, right_paddle], ball)
 
         keys = pygame.key.get_pressed()
         handle_paddle_movement(keys, left_paddle, right_paddle)
@@ -99,6 +108,8 @@ def main():
             if event.type == pygame.QUIT:
                 run_game = False
                 break
+            
+        ball.move()
 
     pygame.quit()
 
