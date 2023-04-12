@@ -43,9 +43,9 @@ class paddle:
 
     def move(self, up=True):
         if up:
-            self.y += self.VEL
-        else:
             self.y -= self.VEL
+        else:
+            self.y += self.VEL
 
 
 def handle_paddle_movement(keys, left_paddle, right_paddle):
@@ -72,13 +72,13 @@ def main():
 
         draw(WN, [left_paddle, right_paddle])
 
+        keys = pygame.key.get_pressed()
+        handle_paddle_movement(keys, left_paddle, right_paddle)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run_game = False
                 break
-
-    keys = pygame.key.get_pressed()
-    handle_paddle_movement(keys, left_paddle, right_paddle)
 
     pygame.quit()
 
