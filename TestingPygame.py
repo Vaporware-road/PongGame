@@ -33,7 +33,7 @@ def draw(win, paddles):
     pygame.display.update()
 
 
-class paddle:
+class Paddle:
     COLOR = WHITE
     VEL = 4
 
@@ -53,6 +53,10 @@ class paddle:
             self.y += self.VEL
 
 
+class Ball:
+    pass
+
+
 def handle_paddle_movement(keys, left_paddle, right_paddle):
     if keys[pygame.K_w] and left_paddle.y - left_paddle.VEL - 5 >= 0:
         left_paddle.move(up=True)
@@ -69,8 +73,8 @@ def main():
     run_game = True
     clock = pygame.time.Clock()
 
-    left_paddle = paddle(10, HEIGHT // 4, PADDLE_WIDTH, PADDLE_HEIGHT)
-    right_paddle = paddle(WIDTH + WIDTH // 4 + WIDTH // 5 + 5, HEIGHT // 4, PADDLE_WIDTH, PADDLE_HEIGHT)
+    left_paddle = Paddle(10, HEIGHT // 4, PADDLE_WIDTH, PADDLE_HEIGHT)
+    right_paddle = Paddle(WIDTH + WIDTH // 4 + WIDTH // 5 + 5, HEIGHT // 4, PADDLE_WIDTH, PADDLE_HEIGHT)
 
     while run_game:
         clock.tick(60)
