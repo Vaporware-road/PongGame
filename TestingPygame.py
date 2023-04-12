@@ -9,8 +9,7 @@ import pygame
 
 pygame.init()
 
-HEIGHT, WIDTH = 9
-00, 600
+HEIGHT, WIDTH = 900, 600
 WN = pygame.display.set_mode((HEIGHT, WIDTH))
 pygame.display.set_caption("Pong by V.road")
 
@@ -48,17 +47,17 @@ class paddle:
         else:
             self.y -= self.VEL
 
-#
-# def handle_paddle_movement(keys, left_paddle, right_paddle):
-#     if keys[pygame.K_w]:
-#         left_paddle.move(up=True)
-#     if keys[pygame.K_s]:
-#         left_paddle.move(up=False)
-#
-#     if keys[pygame.K_UP]:
-#         right_paddle.move(up=True)
-#     if keys[pygame.K_DOWN]:
-#         right_paddle.move(up=False)
+
+def handle_paddle_movement(keys, left_paddle, right_paddle):
+    if keys[pygame.K_w]:
+        left_paddle.move(up=True)
+    if keys[pygame.K_s]:
+        left_paddle.move(up=False)
+
+    if keys[pygame.K_UP]:
+        right_paddle.move(up=True)
+    if keys[pygame.K_DOWN]:
+        right_paddle.move(up=False)
 
 
 def main():
@@ -79,7 +78,7 @@ def main():
                 break
 
     keys = pygame.key.get_pressed()
-    handle_paddle_movement(self, left_paddle, right_paddle)
+    handle_paddle_movement(keys, left_paddle, right_paddle)
 
     pygame.quit()
 
