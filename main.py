@@ -1,174 +1,172 @@
 # !usr/bin/python3
 
-# Pong Game
 """
-documentation
+Document
 """
-
+# Start
 # Modules
-import turtle as tur
+import pygame
 
-# Creating main screen
-wn = tur.Screen()
+pygame.init()
 
+WIDTH, HEIGHT = 900, 600
+WN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Pong by V.road")
 
-# Basic game structures
-class Window:
-    """
-    In this class I did all the objects as well as window settings.
-    (all objects in this class are made statically)
-    """
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+BALL_RADIUS = 10
 
-    @staticmethod
-    def window():
-        """
-        In this function, the initial settings of the game window are made
-        """
-        wn.title("Pong By V.road")
-        wn.bgcolor("black")
-        wn.setup(width=950, height=650)
-        wn.tracer(0)
+PADDLE_WIDTH, PADDLE_HEIGHT = 15, 120
 
-    @staticmethod
-    def create():
-        """
-        All functions are called and executed here, and create objects
-        """
-        # WindowAndObjects.game_objects()
-        Window.window()
+SCORE_FONT = pygame.font.SysFont("comic sans", 50)
 
 
-class ObjectsAndMovement:
-    """
-    bla bla
-    """
+def draw(win, paddles, ball, left_score, right_score):
+    win.fill(BLACK)
 
-    @staticmethod
-    def paddle_1():
-        """
-        All game objects, paddle one and paddle two, as well as the ball,
-        are made and adjusted in this function
-        """
-        # Paddle 1
+    left_score_text = SCORE_FONT.render(f"{left_score}", 1, WHITE)
+    right_score_text = SCORE_FONT.render(f"{right_score}", 1, WHITE)
+    win.blit(left_score_text, (WIDTH / 4 - left_score_text.get_width() / 2, 20))
+    win.blit(right_score_text, (WIDTH * (3 / 4) - right_score_text.get_width() / 2, 20))
 
-        paddle_1 = tur.Turtle()
-        paddle_1.speed(0)
-        paddle_1.shape("square")
-        paddle_1.color("white")
-        paddle_1.shapesize(stretch_wid=5, stretch_len=0.8)
-        paddle_1.penup()
-        paddle_1.goto(-453, 0)
-        return paddle_1
+    for paddle in paddles:
+        paddle.draw(win)
 
-    @staticmethod
-    def paddle_2():
-        # Paddle 2
-        paddle_2 = tur.Turtle()
-        paddle_2.speed(0)
-        paddle_2.shape("square")
-        paddle_2.color("white")
-        paddle_2.shapesize(stretch_wid=5, stretch_len=0.9)
-        paddle_2.penup()
-        paddle_2.goto(445, 0)
-        return paddle_2
+    for i in range(10, HEIGHT, HEIGHT // 10):
+        if i % 2 == 1:
+            continue
+        pygame.draw.rect(win, WHITE, (WIDTH / 2, i, 10, HEIGHT // 20))
 
-    @staticmethod
-    def ball():
-        # Ball
-        ball = tur.Turtle()
-        ball.speed(0)
-        ball.shape("square")
-        ball.color("white")
-        ball.penup()
-        ball.goto(0, 0)
+    ball.draw(win)
 
-        return ball
-
-    @staticmethod
-    def paddle_1_up():
-        paddle = ObjectsAndMovement.paddle_1()
-        y = paddle.ycor()
-        y += 20
-        paddle.sety(y)
-
-    @staticmethod
-    def paddle_1_down():
-        paddle = ObjectsAndMovement.paddle_1()
-        y = paddle.ycor()
-        y -= 20
-        paddle.sety(y)
-
-    @staticmethod
-    def paddle_2_up():
-        paddle = ObjectsAndMovement.paddle_2()
-        y = paddle.ycor()
-        y += 20
-        paddle.sety(y)
-
-    @staticmethod
-    def paddle_2_down():
-        paddle = ObjectsAndMovement.paddle_2()
-        y = paddle.ycor()
-        y -= 20
-        paddle.sety(y)
-
-    @staticmethod
-    def Create():
-        ObjectsAndMovement.paddle_1()
-        ObjectsAndMovement.paddle_2()
-        ObjectsAndMovement.ball()
+    pygame.display.update()
 
 
-# Tes testing module
-def paddle_test():
-    """
-    All game objects, paddle one and paddle two, as well as the ball,
-    are made and adjusted in this function
-    """
-    # Paddle 1
+class Paddle:
+    COLOR = WHITE
+    VEL = 4
 
-    paddle_test = tur.Turtle()
-    paddle_test.speed(0)
-    paddle_test.shape("square")
-    paddle_test.color("white")
-    paddle_test.shapesize(stretch_wid=5, stretch_len=0.8)
-    paddle_test.penup()
-    paddle_test.goto(-453, 0)
-    return paddle_test
+    def __init__(self, x, y, width, height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
 
+    def draw(self, wn):
+        pygame.draw.rect(wn, self.COLOR, (self.x, self.y, self.width, self.height))
 
-# The testing module
-def paddle_1_up():
-    paddle = paddle_test()
-    y = paddle.ycor()
-    y += 20
-    paddle.sety(y)
+    def move(self, up=True):
+        if up:
+            self.y -= self.VEL
+        else:
+            self.y += self.VEL
 
 
-# class Control:
-#     """
-#     this is for control
-#     """
-#
-#     # def __init__(self, paddle_1_up, paddle_1_down, paddle_2_up, paddle_2_down):
-#     #     self.paddle_1_up = paddle_1_up
-#     #     self.paddle_1_down = paddle_1_down
-#     #     self.paddle_2_up = paddle_2_up
-#     #     self.paddle_2_down = paddle_2_down
-#
-#     @staticmethod
-#     def keyboardBinding():
+class Ball:
+    MAX_VEL = 4.5
+    COLOR = WHITE
+
+    def __init__(self, x, y, radius):
+        self.x = self.original_x = x
+        self.y = self.original_y = y
+        self.radius = radius
+        self.x_vel = self.MAX_VEL
+        self.y_vel = 0
+
+    def draw(self, win):
+        pygame.draw.circle(win, self.COLOR, (self.x, self.y), self.radius)
+
+    def move(self):
+        self.x += self.x_vel
+        self.y += self.y_vel
+
+    def reset(self):
+        self.x = self.original_x
+        self.y = self.original_y
+        self.y_vel = 0
+        self.x_vel *= -1
 
 
-wn.listen()
-# wn.onkeypress(ObjectsAndMovement.paddle_1_up, "w")
-wn.onkeypress(paddle_1_up, "w")
-wn.onkeypress(ObjectsAndMovement.paddle_1_down, "s")
-wn.onkeypress(ObjectsAndMovement.paddle_2_up, "p")
-wn.onkeypress(ObjectsAndMovement.paddle_2_down, ";")
+def handle_collision(ball, left_paddle, right_paddle):
+    if ball.y + ball.radius >= HEIGHT:
+        ball.y_vel *= -1
+    elif ball.y - ball.radius <= 0:
+        ball.y_vel *= -1
+
+    if ball.x_vel < 0:
+        if left_paddle.y <= ball.y <= left_paddle.y + left_paddle.height:
+            if ball.x - ball.radius <= left_paddle.x + left_paddle.width:
+                ball.x_vel *= -1
+
+                middle_y = left_paddle.y + left_paddle.height / 2
+                difference_in_y = middle_y - ball.y
+                reduction_factor = (left_paddle.height / 2) / ball.MAX_VEL
+                y_vel = difference_in_y / reduction_factor
+                ball.y_vel = -1 * y_vel
+
+    else:
+        if right_paddle.y <= ball.y <= right_paddle.y + right_paddle.height:
+            if ball.x + ball.radius >= right_paddle.x:
+                ball.x_vel *= -1
+
+                middle_y = right_paddle.y + right_paddle.height / 2
+                difference_in_y = middle_y - ball.y
+                reduction_factor = (right_paddle.height / 2) / ball.MAX_VEL
+                y_vel = difference_in_y / reduction_factor
+                ball.y_vel = -1 * y_vel
+
+
+def handle_paddle_movement(keys, left_paddle, right_paddle):
+    if keys[pygame.K_w] and left_paddle.y - left_paddle.VEL - 5 >= 0:
+        left_paddle.move(up=True)
+    if keys[pygame.K_s] and left_paddle.y + left_paddle.VEL + left_paddle.height + 5 <= HEIGHT:
+        left_paddle.move(up=False)
+
+    if keys[pygame.K_UP] and right_paddle.y - left_paddle.VEL - 5 >= 0:
+        right_paddle.move(up=True)
+    if keys[pygame.K_DOWN] and right_paddle.y + right_paddle.VEL + right_paddle.height + 5 <= HEIGHT:
+        right_paddle.move(up=False)
+
+
+def main():
+    run_game = True
+    clock = pygame.time.Clock()
+
+    left_paddle = Paddle(10, (HEIGHT - PADDLE_HEIGHT) // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
+    right_paddle = Paddle(WIDTH - 10 - PADDLE_WIDTH, (HEIGHT - PADDLE_HEIGHT) // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
+
+    ball = Ball(WIDTH // 2, HEIGHT // 2, BALL_RADIUS)
+
+    left_score = 0
+    right_score = 0
+
+    while run_game:
+        clock.tick(60)
+
+        draw(WN, [left_paddle, right_paddle], ball, left_score, right_score)
+
+        keys = pygame.key.get_pressed()
+        handle_paddle_movement(keys, left_paddle, right_paddle)
+
+        handle_collision(ball, left_paddle, right_paddle)
+        ball.move()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run_game = False
+                break
+
+        if ball.x < 0:
+            right_score += 1
+            ball.reset()
+        elif ball.x > WIDTH:
+            left_score += 1
+            ball.reset()
+    pygame.quit()
+
 
 if __name__ == '__main__':
-    ObjectsAndMovement.Create()
-    Window.create()
-    # Control.keyboardBinding()
-    wn.mainloop()
+    main()
+
+# End
