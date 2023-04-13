@@ -77,42 +77,30 @@ class Ball:
 
 def handle_collision(ball, left_paddle, right_paddle):
     if ball.y + ball.radius >= HEIGHT:
-        ball.x_vel *= -1
+        ball.y_vel *= -1
     elif ball.y - ball.radius <= 0:
         ball.y_vel *= -1
 
-    if ball.x_vel < 0:  # left paddle
+    if ball.x_vel < 0:
         if left_paddle.y <= ball.y <= left_paddle.y + left_paddle.height:
             if ball.x - ball.radius <= left_paddle.x + left_paddle.width:
                 ball.x_vel *= -1
 
-                middle_y = (left_paddle.y + left_paddle.height)
-                difference_in_y = middle_y - ball.y
-                reduction_factor = (left_paddle.height // 2) / ball.MAX_VEL
-                y_vel = difference_in_y // reduction_factor
-                ball.y_vel = -1 * y_vel
-
-    else:  # right paddle
+    else:
         if right_paddle.y <= ball.y <= right_paddle.y + right_paddle.height:
             if ball.x + ball.radius >= right_paddle.x:
-                ball.x_vel *= -1
-
-                middle_y = (right_paddle.y + right_paddle.width)
-                difference_in_y = middle_y - ball.y
-                reduction_factor = (right_paddle.height // 2) // ball.MAX_VEL
-                y_vel = difference_in_y // reduction_factor
-                ball.y_vel = -1 * y_vel
+                ball.x_vel *= -1 
 
 
 def handle_paddle_movement(keys, left_paddle, right_paddle):
     if keys[pygame.K_w] and left_paddle.y - left_paddle.VEL - 5 >= 0:
         left_paddle.move(up=True)
-    if keys[pygame.K_s] and left_paddle.y + left_paddle.VEL + left_paddle.height + 305 <= HEIGHT:
+    if keys[pygame.K_s] and left_paddle.y + left_paddle.VEL + left_paddle.height + 5 <= HEIGHT:
         left_paddle.move(up=False)
 
     if keys[pygame.K_UP] and right_paddle.y - left_paddle.VEL - 5 >= 0:
         right_paddle.move(up=True)
-    if keys[pygame.K_DOWN] and right_paddle.y + right_paddle.VEL + right_paddle.height + 305 <= HEIGHT:
+    if keys[pygame.K_DOWN] and right_paddle.y + right_paddle.VEL + right_paddle.height + 5 <= HEIGHT:
         right_paddle.move(up=False)
 
 
