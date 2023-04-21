@@ -1,14 +1,19 @@
 # !usr/bin/python3
 
 """
-Document
+This program is a pong game designed with the help of O.O.P and design patterns
+to practice and improve the team's programming skills.
+
+This program is written in a one file
 """
+
 # Start
 # Modules
 import pygame
 
 pygame.init()
 
+# Creating variables
 WIDTH, HEIGHT = 900, 600
 WN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pong by V.road")
@@ -24,7 +29,18 @@ SCORE_FONT = pygame.font.SysFont("comic sans", 50)
 WINING_SCORE = 10
 
 
+# ------
+
+
 def draw(win, paddles, ball, left_score, right_score):
+    """
+    This function draws all game objects
+    :param win:
+    :param paddles:
+    :param ball:
+    :param left_score:
+    :param right_score:
+    """
     win.fill(BLACK)
 
     left_score_text = SCORE_FONT.render(f"{left_score}", True, WHITE)
@@ -46,8 +62,11 @@ def draw(win, paddles, ball, left_score, right_score):
 
 
 class Paddle:
+    """
+    This class performs the task of creating the paddle object
+    """
     COLOR = WHITE
-    VEL = 4.2
+    VEL = 5
 
     def __init__(self, x, y, width, height):
         self.x = self.original_x = x
@@ -59,18 +78,28 @@ class Paddle:
         pygame.draw.rect(wn, self.COLOR, (self.x, self.y, self.width, self.height))
 
     def move(self, up=True):
+        """
+        This function moves the pedals with the help of the keyboard.
+        :param up:
+        """
         if up:
             self.y -= self.VEL
         else:
             self.y += self.VEL
 
     def reset(self):
+        """
+        resets after game ends
+        """
         self.x = self.original_x
         self.y = self.original_y
 
 
 class Ball:
-    MAX_VEL = 5
+    """
+    This class creates the ball.
+    """
+    MAX_VEL = 12  # ball speed
     COLOR = WHITE
 
     def __init__(self, x, y, radius):
@@ -83,11 +112,11 @@ class Ball:
     def draw(self, win):
         pygame.draw.circle(win, self.COLOR, (self.x, self.y), self.radius)
 
-    def move(self):
+    def move(self):  # The movement of the ball using its coordinates
         self.x += self.x_vel
         self.y += self.y_vel
 
-    def reset(self):
+    def reset(self):  # Reset after each game round
         self.x = self.original_x
         self.y = self.original_y
         self.y_vel = 0
@@ -95,6 +124,16 @@ class Ball:
 
 
 def handle_collision(ball, left_paddle, right_paddle):
+    """
+    This function is very important, because by using coordinate calculations,
+    it determines with what speed and acceleration the ball will return
+    when it hits a paddle or the edge of the image, and also when it hits a paddle,
+    if it hits the corner with a high speed. It returns, but if it hits the middle of it
+    , it returns at a slow speed
+    :param ball:
+    :param left_paddle:
+    :param right_paddle:
+    """
     if ball.y + ball.radius >= HEIGHT:
         ball.y_vel *= -1
     elif ball.y - ball.radius <= 0:
@@ -124,6 +163,12 @@ def handle_collision(ball, left_paddle, right_paddle):
 
 
 def handle_paddle_movement(keys, left_paddle, right_paddle):
+    """
+    This function installs the keyboard hardware to the program
+    :param keys:
+    :param left_paddle:
+    :param right_paddle:
+    """
     if keys[pygame.K_w] and left_paddle.y - left_paddle.VEL - 5 >= 0:
         left_paddle.move(up=True)
     if keys[pygame.K_s] and left_paddle.y + left_paddle.VEL + left_paddle.height + 5 <= HEIGHT:
@@ -135,21 +180,21 @@ def handle_paddle_movement(keys, left_paddle, right_paddle):
         right_paddle.move(up=False)
 
 
-def main():
-    global win_text
+def main():  # MAIN FUNCTION
     run_game = True
     clock = pygame.time.Clock()
 
+    # creating paddle objects
     left_paddle = Paddle(10, (HEIGHT - PADDLE_HEIGHT) // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
     right_paddle = Paddle(WIDTH - 10 - PADDLE_WIDTH, (HEIGHT - PADDLE_HEIGHT) // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
 
-    ball = Ball(WIDTH // 2, HEIGHT // 2, BALL_RADIUS)
+    ball = Ball(WIDTH // 2, HEIGHT // 2, BALL_RADIUS)  # ball object
 
     left_score = 0
     right_score = 0
 
-    while run_game:
-        clock.tick(60)
+    while run_game:  # while loop game
+        clock.tick(60)  # max fps is 60
 
         draw(WN, [left_paddle, right_paddle], ball, left_score, right_score)
 
